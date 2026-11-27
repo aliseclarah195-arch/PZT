@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PZT</title>
+<style>
+:root{
+  --blue:#c62828;--blue-dark:#8e0000;--blue-light:#fdecea;--blue-border:#f2b8b5;
+  --yellow:#ffc107;--yellow-dark:#e0a800;
+  --marine:#0a1a3a;--marine-dark:#061026;--marine-card:#122a5c;--marine-line:#2a4a8c;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Arial,sans-serif;background:var(--marine);color:var(--blue);min-height:100vh}
+
+/* CONNEXION */
+#mainPage{max-width:520px;margin:auto;padding:25px 18px;min-height:100vh;display:flex;align-items:center}
+.container{width:100%;background:var(--marine-card);padding:25px 20px;border-radius:20px;border:1px solid var(--marine-line);box-shadow:0 6px 20px #0006}
+.logo{text-align:center;color:#fff;font-size:25px;font-weight:bold;margin-bottom:25px}
+.tabs{display:flex;gap:10px;margin-bottom:25px}
+.tabs button{flex:1;padding:13px;border:2px solid var(--blue);border-radius:10px;color:var(--blue);background:#fff;font-weight:bold;cursor:pointer}
+.tabs button.active{background:var(--blue);color:#fff}
+.form{display:none}
+.form.active{display:block}
+.form h2{color:#fff;text-align:center;margin-bottom:20px}
+.form input{width:100%;padding:14px;margin-bottom:14px;border:1px solid var(--marine-line);border-radius:10px;background:#fff;color:var(--blue-dark);outline:none;font-size:15px}
+.form input::placeholder{color:#d67a7a}
+.form input:focus{border-color:var(--blue)}
+.submit{width:100%;padding:15px;border:none;border-radius:10px;background:var(--blue);color:#fff;font-size:16px;font-weight:bold;cursor:pointer}
+.submit:disabled{background:#eec5c5;color:#fff;cursor:not-allowed}
+
+/* BOUTON MAVO */
+.btn-yellow{background:var(--yellow)!important;color:#5a3e00!important;border:none!important}
+.btn-yellow:active{opacity:.85}
+.btn-yellow:disabled{background:#ffe9a8!important;color:#a88b3d!important;cursor:not-allowed}
+
+/* TABLEAU DE BORD */
+#dashboard{display:none;background:transparent;min-height:100vh;padding-bottom:85px}
+.topbar{background:#fff;color:var(--blue);padding:20px;text-align:center;font-size:21px;font-weight:bold;border-bottom:1px solid var(--blue-border)}
+#pageContent{padding:20px;max-width:600px;margin:auto}
+.welcome{background:#fff;padding:25px;border-radius:15px;text-align:center;border:1px solid var(--blue-border)}
+.welcome h2{color:var(--blue);margin-bottom:10px}
+.welcome p{color:var(--blue)}
+
+/* ACCUEIL */
+.home-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.action-btn{padding:18px 5px;border:none;border-radius:13px;background:var(--blue);color:#fff;font-size:13px;font-weight:bold;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;touch-action:manipulation;box-shadow:0 4px 10px #0002}
+.action-btn span{font-size:24px}
+.action-btn:active{opacity:.85}
+
+/* TABLEAU */
+.tableau-container{background:#fff;padding:12px;border-radius:15px;border:1px solid var(--blue-border);margin-top:18px;overflow-x:auto}
+.tableau-container h3{color:var(--blue);margin-bottom:12px;text-align:center;font-size:16px}
+.custom-table{width:100%;border-collapse:collapse;font-size:11px;text-align:center}
+.custom-table th{background:var(--blue);color:#fff;padding:8px 4px;font-weight:bold}
+.custom-table td{padding:7px 4px;border-bottom:1px solid var(--blue-border);color:var(--blue-dark)}
+.custom-table tr:nth-child(even){background:var(--blue-light)}
+.custom-table tr:last-child td{border-bottom:none}
+
+/* INVITER */
+.invite-page-box{background:#fff;padding:22px 18px;border-radius:15px;text-align:center;border:1px solid var(--blue-border);margin-bottom:18px}
+.invite-page-box h3{color:var(--blue);margin-bottom:14px}
+.link-input{width:100%;padding:13px;border:1px solid var(--blue-border);border-radius:10px;background:#fff;color:var(--blue-dark);font-size:13px;outline:none;text-align:center}
+.copy-btn{width:100%;margin-top:12px;padding:14px;border:none;border-radius:10px;background:var(--blue);color:#fff;font-size:15px;font-weight:bold;cursor:pointer;touch-action:manipulation}
+.copy-btn:active{opacity:.85}
+.qr-note{color:var(--blue);opacity:.75;font-size:12px;margin-top:10px}
+.qr-note.on-bg{color:var(--blue);opacity:.8;font-weight:bold}
+
+/* PROFIL */
+.profile-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--blue-border);text-align:left}
+.profile-row:last-of-type{border-bottom:none}
+.profile-row .label{color:var(--blue);opacity:.75;font-size:14px}
+.profile-row .value{color:var(--blue-dark);font-weight:bold;font-size:16px}
+
+/* TOTAL INVITÉ + BONUS */
+.invite-box,.team-box{background:#fff;padding:20px;border-radius:15px;text-align:center;border:1px solid var(--blue-border);margin-top:18px}
+.invite-box h3,.team-box h3{color:var(--blue);margin-bottom:14px}
+.invite-total{background:var(--blue);color:#fff;border-radius:13px;padding:16px;margin-bottom:14px}
+.invite-total .num{font-size:34px;font-weight:bold}
+.invite-total .txt{font-size:13px;color:#fadbe1}
+.bonus-now{font-size:14px;color:var(--blue);margin-bottom:14px}
+.bonus-now b{color:var(--blue-dark)}
+.bonus-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;margin-bottom:8px;border-radius:10px;background:#fff;border:1px solid var(--blue-border);color:var(--blue);text-align:left;font-size:14px}
+.bonus-row .reward{font-weight:bold}
+.bonus-row.reached{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* MON ÉQUIPE */
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.team-btn{padding:18px 6px;border:none;border-radius:13px;background:var(--blue);color:#fff;font-size:22px;font-weight:bold;cursor:default;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px}
+.team-btn small{font-size:11px;font-weight:normal;color:#fadbe1}
+
+/* PROFIT : PRINCIPAL / REVENU */
+.pr-box{display:grid;grid-template-columns:1fr 1fr;margin-top:18px;background:#fff;border:4px solid #1010e8}
+.pr-cell{text-align:center;padding:14px 6px;border-right:4px solid #1010e8;border-bottom:4px solid #1010e8;font-weight:900;word-break:break-word}
+.pr-cell:nth-child(2n){border-right:none}
+.pr-cell:nth-child(n+3){border-bottom:none}
+.pr-title{font-size:clamp(20px,7vw,34px)}
+.pr-value{font-size:clamp(22px,8vw,40px)}
+.pr-blue{color:#1010e8}
+.pr-red{color:#ff1010}
+.pending-note{margin-top:12px;text-align:center;color:#ffd54f;font-size:14px;font-weight:bold}
+
+/* DÉPÔT */
+.deposit-total{background:var(--blue);color:#fff;border-radius:13px;padding:18px;margin-bottom:16px;text-align:center}
+.deposit-total .dt-label{font-size:13px;color:#fadbe1;margin-bottom:6px}
+.deposit-total .dt-value{font-size:26px;font-weight:900}
+.deposit-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;margin-bottom:8px;border-radius:10px;background:#fff;border:1px solid var(--blue-border);font-size:14px;text-align:left}
+.deposit-row .d-left{display:flex;flex-direction:column;gap:2px}
+.deposit-row .d-op{font-weight:bold;color:var(--blue)}
+.deposit-row .d-date{font-size:11px;color:#999}
+.deposit-row .d-right{text-align:right;display:flex;flex-direction:column;gap:3px}
+.deposit-row .d-amount{font-weight:900;color:var(--blue-dark);font-size:16px}
+.deposit-row .d-status{font-size:11px;font-weight:bold}
+.d-status.pending{color:#e0a800}
+.d-status.approved{color:#2e7d32}
+.d-status.refused{color:#c62828}
+.empty-deposit{background:#fff;padding:25px;border-radius:15px;text-align:center;border:1px dashed var(--blue-border);color:var(--blue);opacity:.7}
+
+/* NIVEAUX (TÂCHES verrouillées) */
+.level-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:20px}
+.level-btn{padding:22px 10px;border:none;border-radius:13px;background:var(--blue);color:#fff;font-size:17px;font-weight:bold;cursor:default;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:8px}
+.level-btn small{font-size:14px;font-weight:bold;color:#fadbe1}
+.level-btn.locked{background:#fff;border:2px dashed var(--blue-border);color:var(--blue);cursor:not-allowed;gap:6px}
+.level-btn.locked small{font-size:12px;font-weight:normal;color:var(--blue)}
+
+/* PAGE NIVEAUX + PRIX */
+.level-price-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:20px}
+.level-card{background:var(--blue);color:#fff;border-radius:13px;padding:18px 10px;text-align:center;box-shadow:0 4px 10px #0003;cursor:pointer;touch-action:manipulation}
+.level-card:active{opacity:.85}
+.level-card .lv-name{font-size:18px;font-weight:bold}
+.level-card .lv-price{font-size:20px;font-weight:900;margin:8px 0 4px;color:var(--yellow)}
+.level-card small{display:block;font-size:12px;color:#fadbe1;line-height:1.5}
+
+/* CADRE KELY (EKENA) */
+#levelModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9998;align-items:center;justify-content:center;padding:20px}
+#levelModal.show{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:22px 18px;width:100%;max-width:320px;text-align:center;border:2px solid var(--blue)}
+.modal-box h3{color:var(--blue);font-size:22px;margin-bottom:10px}
+.modal-box p{color:var(--blue-dark);font-size:14px;line-height:1.7}
+.modal-box .submit{margin-top:16px}
+
+.page-title{text-align:center;color:#fff;margin-bottom:20px}
+.section-title{text-align:center;color:#fff;margin-top:25px}
+.back-btn{padding:13px 25px;border:2px solid var(--blue);border-radius:10px;background:#fff;color:var(--blue);font-weight:bold;cursor:pointer;margin-top:20px}
+
+/* RETRAIT & RECHARGE : FORMULAIRE */
+.retrait-input{width:100%;padding:14px;margin-top:12px;border:1px solid var(--blue-border);border-radius:10px;background:#fff;color:var(--blue-dark);font-size:15px;outline:none;text-align:left}
+.retrait-input::placeholder{color:#d67a7a}
+.operator-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.operator-choice{display:flex;align-items:center;justify-content:center;padding:14px 6px;border:2px solid var(--blue-border);border-radius:12px;background:#fff;color:var(--blue);font-size:13px;font-weight:bold;text-align:center;cursor:pointer;touch-action:manipulation;transition:.2s}
+.operator-choice.selected{background:var(--blue);color:#fff;border-color:var(--blue)}
+.op-label{text-align:left;margin-top:16px;color:#fff;font-size:14px;font-weight:bold}
+
+/* RECHARGE : DETAY */
+.recharge-info{background:var(--blue-light);border-radius:12px;padding:15px;margin-top:14px;text-align:left;border:1px dashed var(--blue)}
+.recharge-info .ri-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:6px 0}
+.recharge-info .ri-label{color:var(--blue-dark);font-size:13px;font-weight:bold;flex-shrink:0}
+.recharge-info .ri-value{color:var(--blue-dark);font-size:15px;font-weight:900;text-align:right;word-break:break-word}
+
+/* SARY */
+.recharge-img{
+  width:100%;max-width:280px;margin-top:14px;border-radius:12px;
+  border:1px solid var(--blue-border);display:block;margin-left:auto;margin-right:auto;
+}
+
+/* BOUTON FAKA SARY */
+.btn-upload{
+  width:100%;margin-top:14px;padding:13px;border:2px dashed var(--blue);
+  border-radius:10px;background:#fff;color:var(--blue);font-size:14px;
+  font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  touch-action:manipulation;
+}
+.btn-upload:active{background:var(--blue-light)}
+
+/* RETRAIT : SORATRA LEHIBE */
+.big-retrait{background:#fff;border-radius:15px;padding:26px 12px;text-align:center;border:1px solid var(--blue-border)}
+.big-op,.big-name{color:var(--blue);font-weight:900;font-size:clamp(28px,10vw,46px);line-height:1.1}
+.big-num{color:var(--blue-dark);font-weight:900;font-size:clamp(28px,10.5vw,50px);line-height:1.15;margin:6px 0;letter-spacing:1px;word-break:break-all}
+
+/* RETRAIT : VOLA AZO ALAINA */
+.amount-box{background:#fff;border-radius:15px;padding:20px 15px;margin-top:18px;text-align:center;border:1px solid var(--blue-border)}
+.amount-box h3{color:var(--blue);margin-bottom:14px;font-size:16px}
+.amount-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.amount-choice{padding:15px 6px;border:2px solid var(--blue-border);border-radius:12px;background:#fff;color:var(--blue);font-size:15px;font-weight:bold;cursor:pointer;touch-action:manipulation;transition:.2s}
+.amount-choice.selected{background:var(--blue);color:#fff;border-color:var(--blue)}
+.amount-choice.disabled{background:#fdf3f3;color:#e4a9a9;border-color:#f7e1e1;cursor:not-allowed;pointer-events:none}
+.daily-note{background:var(--blue-light);color:var(--blue-dark);border-radius:10px;padding:12px;font-size:13px;font-weight:bold;margin-bottom:14px}
+
+/* MENU DU BAS */
+.menu{position:fixed;bottom:0;left:0;width:100%;height:75px;background:#fff;border-top:1px solid var(--blue-border);display:flex;justify-content:space-around;align-items:center;z-index:10}
+.menu button{border:none;background:transparent;color:#d67a7a;font-size:11px;font-weight:bold;cursor:pointer;flex:1;height:100%;touch-action:manipulation}
+.menu button span{display:block;font-size:22px;margin-bottom:5px}
+.menu button.active{color:var(--blue)}
+.menu button.empty-btn{
+  flex:0 0 58px;height:58px;width:58px;margin:0 6px;
+  border-radius:50%;background:var(--blue);
+  border:4px solid #fff;box-shadow:0 4px 10px #0004;
+  transform:translateY(-14px);cursor:pointer;
+  color:#fff !important;font-size:22px;padding:0;
+}
+.menu button.empty-btn span{margin:0;font-size:22px}
+.menu button.empty-btn:active{opacity:.85}
+
+/* ======= ADMIN PANEL ======= */
+#adminPage{display:none;min-height:100vh;padding-bottom:30px}
+.adm-wrap{padding:20px;max-width:600px;margin:auto}
+.adm-card{background:#fff;border-radius:15px;padding:16px;margin-bottom:14px;border:1px solid var(--blue-border);text-align:left}
+.adm-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:14px;color:var(--blue-dark)}
+.adm-row b{color:var(--blue)}
+.adm-amount{font-size:24px;font-weight:900;color:var(--blue-dark);text-align:center;margin:8px 0}
+.adm-img{width:100%;border-radius:10px;border:1px solid var(--blue-border);margin:8px 0;display:block}
+.adm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.adm-btn{padding:13px;border:none;border-radius:10px;font-weight:bold;font-size:14px;cursor:pointer;color:#fff;touch-action:manipulation}
+.adm-ok{background:#2e7d32}
+.adm-no{background:#c62828}
+.adm-empty{background:#fff;padding:25px;border-radius:15px;text-align:center;border:1px dashed var(--blue-border);color:var(--blue);opacity:.7;margin-bottom:14px}
+.adm-hist{background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid var(--blue-border);font-size:13px;color:var(--blue-dark);display:flex;justify-content:space-between;gap:8px;text-align:left}
+
+/* ======= LOADING OVERLAY ======= */
+#loadingOverlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:20px;
+}
+#loadingOverlay.show{display:flex}
+.spinner{
+  width:60px;height:60px;border:6px solid #fff;
+  border-top-color:var(--yellow);border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:#fff;font-size:16px;font-weight:bold;text-align:center;padding:0 20px;transition:opacity .3s}
+</style>
+</head>
+<body>
+
+<!-- CONNEXION / INSCRIPTION -->
+<div id="mainPage">
+  <div class="container">
+    <div class="logo">PZT</div>
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showForm('login')">CONNEXION</button>
+      <button id="registerTab" onclick="showForm('register')">INSCRIPTION</button>
+    </div>
+
+    <form id="loginForm" class="form active">
+      <h2>Connectez-vous à votre compte</h2>
+      <input type="text" id="loginPhone" placeholder="Numéro de téléphone" required>
+      <input type="password" id="loginPass" placeholder="Mot de passe" required>
+      <button class="submit" type="submit">SE CONNECTER</button>
+    </form>
+
+    <form id="registerForm" class="form">
+      <h2>Créer un compte</h2>
+      <input type="text" id="fullName" placeholder="Nom complet" required>
+      <input type="tel" id="registerPhone" placeholder="Numéro de téléphone (+261)" required>
+      <input type="password" id="registerPass" placeholder="Mot de passe" required>
+      <input type="password" id="confirmPass" placeholder="Confirmer le mot de passe" required>
+      <input type="text" id="inviteCode" placeholder="Code d'invitation">
+      <button class="submit" type="submit">S'INSCRIRE</button>
+    </form>
+  </div>
+</div>
+
+<!-- TABLEAU DE BORD -->
+<div id="dashboard">
+  <div class="topbar">PZT</div>
+  <div id="pageContent"></div>
+  <div class="menu">
+    <button class="active" onclick="openPage('ACCUEIL',this)"><span>🏠</span>ACCUEIL</button>
+    <button onclick="openPage('PROFIT',this)"><span>💰</span>PROFIT</button>
+    <button class="empty-btn" onclick="openPage('NIVEAUX',this)"><span>⭐</span></button>
+    <button onclick="openPage('PROFIL',this)"><span>👤</span>PROFIL</button>
+    <button onclick="openPage('TÂCHES',this)"><span>📋</span>TÂCHES</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPage">
+  <div class="topbar">PZT · ADMIN</div>
+  <div class="adm-wrap" id="adminContent"></div>
+</div>
+
+<!-- CADRE KELY NIVEAU (EKENA) -->
+<div id="levelModal">
+  <div class="modal-box">
+    <h3 id="lmTitle"></h3>
+    <p id="lmBody"></p>
+    <button class="submit btn-yellow" onclick="closeLevelModal()">EKENA</button>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Mandefa...<br>Miandry kely azafady.</div>
+</div>
+
+<script>
+let currentUser = { name: "", phone: "" };
+let pendingImg = "";
+
+/* ====== IDENTIFIANTS ADMIN : ovay eto ====== */
+const ADMIN = { phone: "admin", pass: "admin1234" };
+
+const levelData = [
+  { n:"Nv.1",  depot:"25 000",   tache:3,  jour:"1 000",    sem:"7 000",    an:"365 000" },
+  { n:"Nv.2",  depot:"55 000",   tache:5,  jour:"2 000",    sem:"14 000",   an:"730 000" },
+  { n:"Nv.3",  depot:"110 000",  tache:7,  jour:"4 000",    sem:"28 000",   an:"1 460 000" },
+  { n:"Nv.4",  depot:"165 000",  tache:10, jour:"6 000",    sem:"42 000",   an:"2 190 000" },
+  { n:"Nv.5",  depot:"275 000",  tache:15, jour:"10 000",   sem:"70 000",   an:"3 650 000" },
+  { n:"Nv.6",  depot:"385 000",  tache:20, jour:"14 000",   sem:"98 000",   an:"5 110 000" },
+  { n:"Nv.7",  depot:"550 000",  tache:25, jour:"20 000",   sem:"140 000",  an:"7 300 000" },
+  { n:"Nv.8",  depot:"1 100 000",tache:30, jour:"40 000",   sem:"280 000",  an:"14 600 000" },
+  { n:"Nv.9",  depot:"2 750 000",tache:35, jour:"100 000",  sem:"700 000",  an:"36 500 000" },
+  { n:"Nv.10", depot:"5 500 000",tache:40, jour:"200 000",  sem:"1 400 000",an:"73 000 000" }
+];
+
+const inviteBonuses = [
+  { count: 20,  reward: "50 000 Ar" },
+  { count: 40,  reward: "100 000 Ar" },
+  { count: 70,  reward: "200 000 Ar" },
+  { count: 100, reward: "500 000 Ar" }
+];
+
+const retraitAmounts = [5000, 10000, 15000, 20000, 30000, 50000, 100000,
+                        150000, 250000, 300000, 500000, 1000000, 2000000, 5000000];
+
+/* ======== AMPIO NY RECHARGE INFO ETO ======== */
+const rechargeInfo = {
+  "Airtel Money": { num: "033 00 000 00", name: "PZT Airtel" },
+  "MVola": { num: "034 00 000 00", name: "PZT MVola" },
+  "Orange Money": { num: "032 00 000 00", name: "PZT Orange" }
+};
+
+function formatAr(n) {
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " Ar";
+}
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+function todayKey() {
+  let d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+
+function nowTime() {
+  let d = new Date();
+  return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+}
+
+function hasWithdrawnToday() {
+  let u = getUsers()[currentUser.phone];
+  return !!(u && u.lastRetraitDate === todayKey());
+}
+
+/* FORMULAIRES */
+function showForm(type) {
+  ["loginForm","registerForm","loginTab","registerTab"].forEach(id =>
+    document.getElementById(id).classList.remove("active"));
+  if (type === "login") {
+    document.getElementById("loginForm").classList.add("active");
+    document.getElementById("loginTab").classList.add("active");
+  } else {
+    document.getElementById("registerForm").classList.add("active");
+    document.getElementById("registerTab").classList.add("active");
+  }
+}
+
+/* LIEN D'INVITATION ?code=... */
+(function () {
+  try {
+    let code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      document.getElementById("inviteCode").value = code;
+      showForm("register");
+    }
+  } catch (e) {}
+})();
+
+/* STOCKAGE LOCAL */
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem("users") || "{}"); }
+  catch (e) { return {}; }
+}
+function saveUsers(users) {
+  try { localStorage.setItem("users", JSON.stringify(users)); return true; }
+  catch (e) { return false; }
+}
+
+function getInviteCount(phone) {
+  let users = getUsers();
+  return Object.keys(users).filter(k => users[k].inviteCode === phone).length;
+}
+
+function getTeamCounts(phone) {
+  let users = getUsers();
+  let all = Object.values(users);
+  let a = all.filter(u => u.inviteCode === phone);
+  let b = all.filter(u => a.some(x => x.phone === u.inviteCode));
+  let c = all.filter(u => b.some(x => x.phone === u.inviteCode));
+  return { a: a.length, b: b.length, c: c.length };
+}
+
+/* ===== DÉPÔTS (avec validation admin) ===== */
+function getDeposits(phone) {
+  let u = getUsers()[phone];
+  return (u && Array.isArray(u.deposits)) ? u.deposits : [];
+}
+
+function isApproved(d) { return d.status === "approved"; }
+
+function addDeposit(phone, op, amount, img) {
+  let users = getUsers();
+  let u = users[phone];
+  if (!u) return false;
+  if (!Array.isArray(u.deposits)) u.deposits = [];
+  let dep = {
+    id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+    operator: op,
+    amount: Number(amount),
+    date: todayKey(),
+    time: nowTime(),
+    status: "pending",
+    img: img || ""
+  };
+  u.deposits.push(dep);
+  if (!saveUsers(users)) {
+    dep.img = "";
+    return saveUsers(users);
+  }
+  return true;
+}
+
+function getTotalDeposits(phone) {
+  return getDeposits(phone).filter(isApproved).reduce((s, d) => s + Number(d.amount || 0), 0);
+}
+
+function getPendingTotal(phone) {
+  return getDeposits(phone).filter(d => d.status === "pending").reduce((s, d) => s + Number(d.amount || 0), 0);
+}
+
+(function () {
+  let users = getUsers(), changed = false;
+  Object.values(users).forEach(u => (u.deposits || []).forEach(d => {
+    if (!d.status) {
+      d.status = "pending";
+      d.id = d.id || (Date.now() + "-" + Math.random().toString(36).slice(2, 7));
+      changed = true;
+    }
+  }));
+  if (changed) saveUsers(users);
+})();
+
+/* INSCRIPTION */
+document.getElementById("registerForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  let name = document.getElementById("fullName").value.trim();
+  let phone = document.getElementById("registerPhone").value.trim();
+  let pass = document.getElementById("registerPass").value;
+  let confirm = document.getElementById("confirmPass").value;
+  let inviteCode = document.getElementById("inviteCode").value.trim();
+
+  if (pass !== confirm) { alert("Les mots de passe ne correspondent pas !"); return; }
+  if (phone === ADMIN.phone) { alert("Ce numéro est réservé."); return; }
+
+  let users = getUsers();
+  if (users[phone]) { alert("Ce numéro est déjà inscrit."); return; }
+  users[phone] = { name: name, phone: phone, pass: pass, inviteCode: inviteCode, deposits: [] };
+  saveUsers(users);
+
+  document.getElementById("loginPhone").value = phone;
+  document.getElementById("loginPass").value = pass;
+  alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+  showForm("login");
+});
+
+/* CONNEXION */
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  let phone = document.getElementById("loginPhone").value.trim();
+  let pass = document.getElementById("loginPass").value;
+
+  if (phone === ADMIN.phone && pass === ADMIN.pass) {
+    openAdmin();
+    return;
+  }
+
+  let user = getUsers()[phone];
+
+  if (!user || user.pass !== pass) { alert("Numéro de téléphone ou mot de passe incorrect !"); return; }
+
+  currentUser = { name: user.name, phone: user.phone };
+  document.getElementById("mainPage").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  openPage("ACCUEIL", document.querySelector(".menu button"));
+});
+
+function logout() {
+  currentUser = { name: "", phone: "" };
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("adminPage").style.display = "none";
+  document.getElementById("mainPage").style.display = "flex";
+  showForm("login");
+}
+
+function backBtn() {
+  return `<div style="text-align:center;">
+    <button class="back-btn" onclick="openPage('ACCUEIL', document.querySelectorAll('.menu button')[0])">← RETOUR</button>
+  </div>`;
+}
+
+/* ======= ADMIN PANEL ======= */
+function openAdmin() {
+  document.getElementById("mainPage").style.display = "none";
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("adminPage").style.display = "block";
+  renderAdmin();
+}
+
+function renderAdmin() {
+  let users = getUsers();
+  let pending = [], done = [];
+  Object.values(users).forEach(u => {
+    (u.deposits || []).forEach(d => {
+      if (d.status === "pending") pending.push({ u: u, d: d });
+      else if (d.status === "approved" || d.status === "refused") done.push({ u: u, d: d });
+    });
+  });
+  let key = x => (x.d.date || "") + (x.d.time || "");
+  pending.sort((a, b) => key(b).localeCompare(key(a)));
+  done.sort((a, b) => key(b).localeCompare(key(a)));
+
+  let pendingHtml = pending.length ? pending.map(x => `
+    <div class="adm-card">
+      <div class="adm-row"><b>Nom</b><span>${esc(x.u.name)}</span></div>
+      <div class="adm-row"><b>Téléphone</b><span>${esc(x.u.phone)}</span></div>
+      <div class="adm-row"><b>Opérateur</b><span>${esc(x.d.operator)}</span></div>
+      <div class="adm-row"><b>Date</b><span>${esc(x.d.date)} à ${esc(x.d.time)}</span></div>
+      <div class="adm-amount">${formatAr(x.d.amount)}</div>
+      ${x.d.img ? `<img class="adm-img" src="${x.d.img}" alt="Capture">` : `<div class="qr-note">Aucune capture enregistrée.</div>`}
+      <div class="adm-actions">
+        <button class="adm-btn adm-ok" data-phone="${esc(x.u.phone)}" data-id="${esc(x.d.id)}" data-status="approved" onclick="adminDecide(this)">✅ VALIDER</button>
+        <button class="adm-btn adm-no" data-phone="${esc(x.u.phone)}" data-id="${esc(x.d.id)}" data-status="refused" onclick="adminDecide(this)">❌ REFUSER</button>
+      </div>
+    </div>`).join("")
+    : `<div class="adm-empty">Aucune demande en attente.</div>`;
+
+  let doneHtml = done.slice(0, 30).map(x => `
+    <div class="adm-hist">
+      <span>${esc(x.u.name)}<br><small>${esc(x.d.date)} ${esc(x.d.time)} · ${esc(x.d.operator)}</small></span>
+      <span style="text-align:right"><b>${formatAr(x.d.amount)}</b><br>
+      <small class="d-status ${x.d.status}">${x.d.status === "approved" ? "✅ Validé" : "❌ Refusé"}</small></span>
+    </div>`).join("");
+
+  document.getElementById("adminContent").innerHTML = `
+    <h2 class="page-title">Demandes en attente (${pending.length})</h2>
+    ${pendingHtml}
+    ${done.length ? `<h3 class="section-title" style="margin-bottom:12px;">Historique</h3>${doneHtml}` : ""}
+    <div style="text-align:center;">
+      <button class="back-btn" onclick="renderAdmin()">↻ ACTUALISER</button>
+      <button class="back-btn" onclick="logout()">SE DÉCONNECTER</button>
+    </div>`;
+  window.scrollTo(0, 0);
+}
+
+function adminDecide(btn) {
+  let phone = btn.getAttribute("data-phone");
+  let id = btn.getAttribute("data-id");
+  let status = btn.getAttribute("data-status");
+  let txt = status === "approved" ? "VALIDER" : "REFUSER";
+  if (!confirm("Voulez-vous " + txt + " ce dépôt ?")) return;
+
+  let users = getUsers();
+  let u = users[phone];
+  if (!u) return;
+  let d = (u.deposits || []).find(x => x.id === id);
+  if (!d) return;
+  d.status = status;
+  d.decided = todayKey() + " " + nowTime();
+  if (status === "refused") d.img = "";
+  saveUsers(users);
+  renderAdmin();
+}
+
+/* RECHARGE */
+function rechargeAction() {
+  pendingImg = "";
+  document.getElementById("pageContent").innerHTML = `
+    <h2 class="page-title">RECHARGE 💳</h2>
+    <div class="welcome">
+      <h2>Recharger votre compte</h2>
+      <p>Choisissez votre opérateur, entrez le montant et prenez une capture.</p>
+
+      <div class="op-label">Opérateur :</div>
+      <div class="operator-grid">
+        <div class="operator-choice" data-op="Airtel Money" onclick="selectOperator(this)">Airtel<br>Money</div>
+        <div class="operator-choice" data-op="MVola" onclick="selectOperator(this)">MVola</div>
+        <div class="operator-choice" data-op="Orange Money" onclick="selectOperator(this)">Orange<br>Money</div>
+      </div>
+
+      <div id="rechargeInfoBox"></div>
+
+      <button class="submit btn-yellow" style="margin-top:18px;" onclick="submitRecharge()">VALIDER LA RECHARGE</button>
+    </div>
+    ${backBtn()}
+  `;
+  document.getElementById("rechargeInfoBox").innerHTML = "";
+}
+
+function selectOperator(el) {
+  document.querySelectorAll(".operator-choice").forEach(op => op.classList.remove("selected"));
+  el.classList.add("selected");
+
+  let op = el.getAttribute("data-op");
+  let box = document.getElementById("rechargeInfoBox");
+
+  if (box && rechargeInfo[op]) {
+    let info = rechargeInfo[op];
+    box.innerHTML = `
+      <div class="recharge-info">
+        <div class="ri-row">
+          <span class="ri-label">Numéro :</span>
+          <span class="ri-value">${info.num}</span>
+        </div>
+        <div class="ri-row">
+          <span class="ri-label">Nom :</span>
+          <span class="ri-value">${info.name}</span>
+        </div>
+      </div>
+
+      <input type="number" id="rechargeAmount" class="retrait-input" placeholder="Montant envoyé (Ar)" style="margin-top:14px; font-weight:bold;">
+
+      <button class="btn-upload" onclick="document.getElementById('captureInput').click()">
+        📷 PRENDRE UNE CAPTURE / CHOISIR UNE IMAGE
+      </button>
+
+      <div id="imagePreviewBox"></div>
+      <input type="file" id="captureInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+    `;
+    pendingImg = "";
+  }
+}
+
+function handleImageUpload(event) {
+  let file = event.target.files[0];
+  if (!file) return;
+
+  let reader = new FileReader();
+  reader.onload = function (e) {
+    let img = new Image();
+    img.onload = function () {
+      let max = 700;
+      let s = Math.min(1, max / Math.max(img.width, img.height));
+      let c = document.createElement("canvas");
+      c.width = Math.round(img.width * s);
+      c.height = Math.round(img.height * s);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      pendingImg = c.toDataURL("image/jpeg", 0.6);
+      let previewBox = document.getElementById("imagePreviewBox");
+      if (previewBox) {
+        previewBox.innerHTML = `<img src="${pendingImg}" alt="Capture" class="recharge-img">`;
+      }
+    };
+    img.onerror = function () { alert("Image invalide. Réessayez."); };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitRecharge() {
+  let selected = document.querySelector(".operator-choice.selected");
+  if (!selected) { alert("Veuillez choisir un opérateur (Airtel Money, MVola ou Orange Money)."); return; }
+
+  let amountInput = document.getElementById("rechargeAmount");
+  let amount = amountInput ? amountInput.value.trim() : "";
+  if (!amount || Number(amount) <= 0) {
+    alert("Veuillez saisir le montant à envoyer.");
+    return;
+  }
+
+  if (!pendingImg) {
+    alert("Veuillez choisir une capture d'écran (image) de votre paiement.");
+    return;
+  }
+
+  let op = selected.getAttribute("data-op");
+
+  let overlay = document.getElementById("loadingOverlay");
+  let loadingText = document.getElementById("loadingText");
+  loadingText.innerHTML = "Mandefa...<br>Miandry kely azafady.";
+  overlay.classList.add("show");
+
+  setTimeout(function () {
+    loadingText.innerHTML = "Lasa fandefasana...";
+    setTimeout(function () {
+      overlay.classList.remove("show");
+
+      let ok = addDeposit(currentUser.phone, op, amount, pendingImg);
+      pendingImg = "";
+
+      if (ok) {
+        alert("Demande envoyée !\n\nVotre dépôt de " + formatAr(Number(amount)) +
+              " est en attente de validation par l'admin. Il sera ajouté à votre Principal après confirmation.");
+      } else {
+        alert("Erreur : impossible d'enregistrer la demande. Réessayez.");
+      }
+
+      openPage("ACCUEIL", document.querySelectorAll(".menu button")[0]);
+    }, 800);
+  }, 3000);
+}
+
+/* RETRAIT */
+function getSavedRetrait() {
+  let u = getUsers()[currentUser.phone];
+  return (u && u.retrait) ? u.retrait : null;
+}
+
+function retraitAction() {
+  let saved = getSavedRetrait();
+  if (saved) { showRetraitInfo(saved); return; }
+
+  document.getElementById("pageContent").innerHTML = `
+    <h2 class="page-title">RETRAIT 💸</h2>
+    <div class="welcome">
+      <h2>Demande de retrait</h2>
+      <p>Remplissez le formulaire ci-dessous.</p>
+
+      <input type="text" id="retraitName" class="retrait-input" placeholder="Votre nom complet">
+      <input type="tel" id="retraitPhone" class="retrait-input" placeholder="Numéro de retrait (ex: 034 00 000 00)">
+
+      <div class="op-label">Choisissez l'opérateur :</div>
+      <div class="operator-grid">
+        <div class="operator-choice" data-op="Airtel Money" onclick="selectOperator(this)">Airtel<br>Money</div>
+        <div class="operator-choice" data-op="MVola" onclick="selectOperator(this)">MVola</div>
+        <div class="operator-choice" data-op="Orange Money" onclick="selectOperator(this)">Orange<br>Money</div>
+      </div>
+
+      <button class="submit btn-yellow" style="margin-top:18px;" onclick="submitRetrait()">VALIDER LE RETRAIT</button>
+    </div>
+    ${backBtn()}
+  `;
+}
+
+function submitRetrait() {
+  let name = document.getElementById("retraitName").value.trim();
+  let phone = document.getElementById("retraitPhone").value.trim();
+  let selected = document.querySelector(".operator-choice.selected");
+
+  if (!name) { alert("Veuillez saisir votre nom complet."); return; }
+  if (!phone) { alert("Veuillez saisir votre numéro de retrait."); return; }
+  if (!selected) { alert("Veuillez choisir un opérateur (Airtel Money, MVola ou Orange Money)."); return; }
+
+  let users = getUsers();
+  let u = users[currentUser.phone];
+  let info = { name: name, phone: phone, operator: selected.getAttribute("data-op") };
+
+  if (u) { u.retrait = info; saveUsers(users); }
+
+  showRetraitInfo(info);
+}
+
+function showRetraitInfo(info) {
+  let done = hasWithdrawnToday();
+
+  let amounts = retraitAmounts.map(a =>
+    `<div class="amount-choice ${done ? "disabled" : ""}" data-amount="${a}" onclick="selectAmount(this)">${formatAr(a)}</div>`
+  ).join("");
+
+  document.getElementById("pageContent").innerHTML = `
+    <h2 class="page-title">RETRAIT 💸</h2>
+
+    <div class="big-retrait">
+      <div class="big-op" id="brOp"></div>
+      <div class="big-num" id="brNum"></div>
+      <div class="big-name" id="brName"></div>
+    </div>
+
+    <p class="qr-note on-bg" style="text-align:center;">🔒 Ces informations ne peuvent plus être modifiées.</p>
+
+    <div class="amount-box">
+      <h3>Montant à retirer</h3>
+      ${done ? '<div class="daily-note">✅ Retrait déjà effectué aujourd\'hui. Revenez demain.</div>' : ''}
+      <div class="amount-grid">${amounts}</div>
+      <button class="submit btn-yellow" style="margin-top:18px;" onclick="confirmAmount()" ${done ? "disabled" : ""}>
+        ${done ? "RETRAIT DÉJÀ FAIT AUJOURD'HUI" : "DEMANDER LE RETRAIT"}
+      </button>
+    </div>
+
+    ${backBtn()}
+  `;
+
+  document.getElementById("brOp").textContent = info.operator || "";
+  document.getElementById("brNum").textContent = info.phone.replace(/\s+/g, "");
+  document.getElementById("brName").textContent = info.name;
+  window.scrollTo(0, 0);
+}
+
+function selectAmount(el) {
+  if (el.classList.contains("disabled")) return;
+  document.querySelectorAll(".amount-choice").forEach(a => a.classList.remove("selected"));
+  el.classList.add("selected");
+}
+
+function confirmAmount() {
+  if (hasWithdrawnToday()) {
+    alert("Vous avez déjà fait un retrait aujourd'hui. Revenez demain.");
+    return;
+  }
+
+  let selected = document.querySelector(".amount-choice.selected");
+  if (!selected) { alert("Veuillez choisir un montant."); return; }
+
+  let users = getUsers();
+  let u = users[currentUser.phone];
+  let info = u.retrait;
+  let amount = Number(selected.getAttribute("data-amount"));
+
+  u.lastRetraitDate = todayKey();
+  saveUsers(users);
+
+  alert("Demande de retrait envoyée !\n\n" +
+        "Montant : " + formatAr(amount) + "\n" +
+        "Numéro : " + info.phone + "\n" +
+        "Opérateur : " + info.operator);
+
+  showRetraitInfo(info);
+}
+
+/* INVITER DES AMIS */
+function getInviteLink() {
+  let base = window.location.href.split("?")[0].split("#")[0];
+  return base + "?code=" + encodeURIComponent(currentUser.phone);
+}
+
+function inviteFriends() {
+  document.getElementById("pageContent").innerHTML = `
+    <h2 class="page-title">INVITER DES AMIS 🤝</h2>
+    <div class="invite-page-box">
+      <h3>🔗 Lien d'invitation</h3>
+      <input type="text" id="inviteLinkInput" class="link-input" readonly>
+      <button class="copy-btn btn-yellow" onclick="copyInviteLink()">COPIER LE LIEN</button>
+      <p class="qr-note">Envoyez ce lien à vos amis : ils s'inscriront avec votre code d'invitation.</p>
+    </div>
+    ${backBtn()}
+  `;
+  document.getElementById("inviteLinkInput").value = getInviteLink();
+}
+
+function copyInviteLink() {
+  let input = document.getElementById("inviteLinkInput");
+  let link = input.value;
+  let done = () => alert("Lien copié !");
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(link).then(done).catch(() => fallbackCopy(input, done));
+  } else {
+    fallbackCopy(input, done);
+  }
+}
+
+function fallbackCopy(input, done) {
+  input.select();
+  input.setSelectionRange(0, 99999);
+  try { document.execCommand("copy"); done(); }
+  catch (e) { alert("Copiez le lien manuellement : " + input.value); }
+}
+
+/* CADRE KELY NIVEAU (EKENA) */
+function openLevelModal(i) {
+  let d = levelData[i];
+  document.getElementById("lmTitle").textContent = d.n + " · " + d.depot + " Ar";
+  document.getElementById("lmBody").innerHTML =
+    d.tache + " tâches<br>Rev./Jour : " + d.jour + " Ar<br>Rev./Sem. : " + d.sem + " Ar<br>Rev./An : " + d.an + " Ar";
+  document.getElementById("levelModal").classList.add("show");
+}
+
+function closeLevelModal() {
+  document.getElementById("levelModal").classList.remove("show");
+}
+
+/* PAGES DU MENU */
+function openPage(page, btn) {
+  document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+
+  let content = document.getElementById("pageContent");
+
+  if (page === "ACCUEIL") {
+    let rows = levelData.map(d => `
+      <tr>
+        <td>${d.n}</td>
+        <td>${d.depot}</td>
+        <td>${d.tache}</td>
+        <td>${d.jour}</td>
+        <td>${d.sem}</td>
+        <td>${d.an}</td>
+      </tr>`).join("");
+
+    content.innerHTML = `
+      <div class="welcome">
+        <h2 id="welcomeName"></h2>
+        <p>Bienvenue sur PZT.</p>
+      </div>
+      <div class="home-actions">
+        <button class="action-btn" onclick="rechargeAction()"><span>💳</span>RECHARGE</button>
+        <button class="action-btn btn-yellow" onclick="inviteFriends()"><span>🤝</span>INVITER</button>
+        <button class="action-btn" onclick="retraitAction()"><span>💸</span>RETIRER</button>
+      </div>
+      <div class="tableau-container">
+        <h3>Tableau des niveaux</h3>
+        <table class="custom-table">
+          <tr>
+            <th>Niveau</th>
+            <th>Dépôt</th>
+            <th>Tâche</th>
+            <th>Rev./Jour</th>
+            <th>Rev./Sem.</th>
+            <th>Rev./An</th>
+          </tr>
+          ${rows}
+        </table>
+      </div>`;
+    document.getElementById("welcomeName").textContent = "Bonjour, " + currentUser.name + " 👋";
+  }
+
+  else if (page === "PROFIT") {
+    let count = getInviteCount(currentUser.phone);
+    let team = getTeamCounts(currentUser.phone);
+    let reached = inviteBonuses.filter(b => count >= b.count);
+    let current = reached.length ? reached[reached.length - 1].reward : "0 Ar";
+    let rows = inviteBonuses.map(b => `
+      <div class="bonus-row ${count >= b.count ? "reached" : ""}">
+        <span>${count >= b.count ? "✅" : "🎯"} ${b.count} invités</span>
+        <span class="reward">${b.reward}</span>
+      </div>`).join("");
+
+    let totalDep = getTotalDeposits(currentUser.phone);
+    let pendingDep = getPendingTotal(currentUser.phone);
+
+    content.innerHTML = `
+      <h2 class="page-title">PROFIT 💰</h2>
+
+      <div class="pr-box">
+        <div class="pr-cell pr-title pr-blue">Principal</div>
+        <div class="pr-cell pr-title pr-red">Revenu</div>
+        <div class="pr-cell pr-value pr-blue">${formatAr(totalDep).toUpperCase()}</div>
+        <div class="pr-cell pr-value pr-red">0 AR</div>
+      </div>
+      ${pendingDep > 0 ? `<div class="pending-note">⏳ En attente de validation : ${formatAr(pendingDep)}</div>` : ""}
+
+      <div class="invite-box">
+        <h3>Total invité</h3>
+        <div class="invite-total">
+          <div class="num">${count}</div>
+          <div class="txt">personnes inscrites avec votre code</div>
+        </div>
+        <p class="bonus-now">Bonus actuel ce mois : <b>${current}</b></p>
+        ${rows}
+      </div>
+      <div class="team-box">
+        <h3>Mon équipe</h3>
+        <div class="team-grid">
+          <div class="team-btn">A<small>${team.a} membres</small></div>
+          <div class="team-btn">B<small>${team.b} membres</small></div>
+          <div class="team-btn">C<small>${team.c} membres</small></div>
+        </div>
+      </div>`;
+  }
+
+  else if (page === "NIVEAUX") {
+    let cards = levelData.map((d, i) => `
+      <div class="level-card" onclick="openLevelModal(${i})">
+        <div class="lv-name">${d.n}</div>
+        <div class="lv-price">${d.depot} Ar</div>
+        <small>${d.tache} tâches · ${d.jour} Ar/jour</small>
+      </div>`).join("");
+    content.innerHTML = `
+      <h2 class="page-title">NIVEAUX ⭐</h2>
+      <div class="level-price-grid">${cards}</div>
+      ${backBtn()}`;
+  }
+
+  else if (page === "DÉPÔT") {
+    let deposits = getDeposits(currentUser.phone);
+    let total = getTotalDeposits(currentUser.phone);
+    let listHtml = "";
+
+    if (deposits.length === 0) {
+      listHtml = `<div class="empty-deposit">Aucun dépôt pour le moment.<br>Faites une recharge pour commencer.</div>`;
+    } else {
+      listHtml = deposits.slice().reverse().map(d => {
+        let st = d.status || "pending";
+        let label = st === "pending" ? "⏳ En attente" : (st === "refused" ? "❌ Refusé" : "✅ Validé");
+        return `
+        <div class="deposit-row">
+          <div class="d-left">
+            <span class="d-op">${esc(d.operator)}</span>
+            <span class="d-date">${esc(d.date)} à ${esc(d.time)}</span>
+          </div>
+          <div class="d-right">
+            <span class="d-amount">${formatAr(d.amount)}</span>
+            <span class="d-status ${st}">${label}</span>
+          </div>
+        </div>`;
+      }).join("");
+    }
+
+    content.innerHTML = `
+      <h2 class="page-title">DÉPÔT 💳</h2>
+      <div class="deposit-total">
+        <div class="dt-label">Total des dépôts validés</div>
+        <div class="dt-value">${formatAr(total)}</div>
+      </div>
+      <h3 class="section-title" style="margin-bottom:12px;">Historique des recharges</h3>
+      ${listHtml}
+      ${backBtn()}
+    `;
+  }
+
+  else if (page === "PROFIL") {
+    let saved = getSavedRetrait();
+    content.innerHTML = `
+      <h2 class="page-title">PROFIL 👤</h2>
+      <div class="welcome">
+        <div class="profile-row"><span class="label">Nom</span><span class="value" id="pName"></span></div>
+        <div class="profile-row"><span class="label">Téléphone</span><span class="value" id="pPhone"></span></div>
+        <div class="profile-row"><span class="label">Code d'invitation</span><span class="value" id="pCode"></span></div>
+        <div class="profile-row"><span class="label">Compte de retrait</span><span class="value" id="pRetrait"></span></div>
+        <button class="back-btn" onclick="logout()">SE DÉCONNECTER</button>
+      </div>`;
+    document.getElementById("pName").textContent = currentUser.name;
+    document.getElementById("pPhone").textContent = currentUser.phone;
+    document.getElementById("pCode").textContent = currentUser.phone;
+    document.getElementById("pRetrait").textContent = saved ? "🔒 " + saved.phone : "Non défini";
+  }
+
+  else if (page === "TÂCHES") {
+    let levels = levelData.map(d => `
+      <div class="level-btn locked">🔒 ${d.n}<small>${d.depot} Ar</small></div>`).join("");
+    content.innerHTML = `
+      <h2 class="page-title">TÂCHES 📋</h2>
+      <div class="welcome"><p>Les niveaux sont verrouillés pour le moment.</p></div>
+      <div class="level-grid">${levels}</div>`;
+  }
+
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
